@@ -7,7 +7,7 @@
 function calculateSimpleRevenue(purchase, _product) {
    // @TODO: Расчет выручки от операции
    const discount = 1 - (purchase.discount / 100);
-   return +(purchase.sale_price * purchase.quantity * discount).toFixed(2);
+   return purchase.sale_price * purchase.quantity * discount;
 }
 
 /**
@@ -138,12 +138,13 @@ function analyzeSalesData(data, options) {
     // @TODO: Назначение премий на основе ранжирования
     sellerStats.forEach((seller, index) => {
         seller.bonus = calculateBonus(index, sellerStats.length, seller);
-        seller.top_products =  Object.entries(seller.products_sold).map(item => ({
-        sku: item[0],
-        quantity: item[1]
+        seller.top_products = Object.entries(seller.products_sold)
+        .map(item => ({
+            sku: item[0],
+            quantity: item[1]
         }))
-        .sort((a, b) => b.quantity - a.quantity)
-        .slice(0, 10);// Формируем топ-10 товаров
+        .sort((a, b) => b.quantity - a.quantity || a.sku.localeCompare(b.sku))
+        .slice(0, 10);
 
     });
 
