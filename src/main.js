@@ -94,12 +94,6 @@ function analyzeSalesData(data, options) {
         // Увеличить количество продаж для каждого продавца
         seller.sales_count += 1;
 
-
-        
-        // const totalRevenue = record.items.reduce((acc, item) => {
-        //     const product = productIndex[item.sku];
-        //     return acc + calculateRevenue(item, product);
-        // }, 0);
         seller.revenue += record.total_amount;
 
 
