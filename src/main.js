@@ -95,15 +95,12 @@ function analyzeSalesData(data, options) {
         seller.sales_count += 1;
 
 
-        // Увеличить общую сумму выручки всех продаж для каждого продавца
-        // const totalRevenue = record.items.reduce((acc, item) =>{
-        //     return acc + ((item.sale_price * item.quantity) * (1- (item.discount / 100)))
+        
+        // const totalRevenue = record.items.reduce((acc, item) => {
+        //     const product = productIndex[item.sku];
+        //     return acc + calculateRevenue(item, product);
         // }, 0);
-        const totalRevenue = record.items.reduce((acc, item) => {
-            const product = productIndex[item.sku];
-            return acc + calculateRevenue(item, product);
-        }, 0);
-        seller.revenue += totalRevenue;
+        seller.revenue += record.total_amount;
 
 
         // Расчёт прибыли для каждого товара
@@ -137,16 +134,15 @@ function analyzeSalesData(data, options) {
 
     // @TODO: Назначение премий на основе ранжирования
     sellerStats.forEach((seller, index) => {
-        seller.bonus = calculateBonus(index, sellerStats.length, seller);
-        seller.top_products = Object.entries(seller.products_sold)
+    seller.bonus = calculateBonus(index, sellerStats.length, seller);
+    seller.top_products = Object.entries(seller.products_sold)
         .map(item => ({
             sku: item[0],
             quantity: item[1]
         }))
-        .sort((a, b) => b.quantity - a.quantity || a.sku.localeCompare(b.sku))
+        .sort((a, b) => b.quantity - a.quantity)
         .slice(0, 10);
-
-    });
+});
 
     // @TODO: Подготовка итоговой коллекции с нужными полями
     return sellerStats.map(seller => ({
