@@ -76,14 +76,12 @@ function analyzeSalesData(data, options) {
         sales_count: 0,
         products_sold: {}
     })); 
-    console.log("sellerStats", sellerStats)
 
     // @TODO: Индексация продавцов и товаров для быстрого доступа
     const sellerIndex = sellerStats.reduce((acc, seller) => {
         acc[seller.id] = seller
         return acc
     }, {})
-    console.log("sellerIndex", sellerIndex)
 
     // const productIndex  = data.products.reduce((acc, product) => {
     //     acc[product.sku] = product
@@ -94,7 +92,6 @@ function analyzeSalesData(data, options) {
     const productIndex = Object.fromEntries(data.products.map( product => { // захотел через Object.fromEntries по приколу сделать, кто запретит?
     return [product.sku, product]
     }))
-    console.log("productIndex", productIndex)
 
     // @TODO: Расчет выручки и прибыли для каждого продавца
     data.purchase_records.forEach(record => { // для каждого Чека из коллекции продаж мы изменяем инфу внутри шаблона статистики продавца sellerStats
@@ -103,7 +100,6 @@ function analyzeSalesData(data, options) {
         seller.sales_count ++
         // Увеличить общую сумму выручки всех продаж
         seller.revenue += record.total_amount
-
         // Расчёт прибыли для каждого товара
         record.items.forEach(item => { // перебираем каждый проданный товар из коллекции продаж
             const product = productIndex[item.sku]; // Определяем Товар, по его sku из коллеции продуктов (по ключу чека продажи из коллеции продаж)
@@ -123,7 +119,6 @@ function analyzeSalesData(data, options) {
             seller.products_sold[item.sku] ++
         });
     });
-
     // @TODO: Сортировка продавцов по прибыли
     sellerStats.sort((a, b) => {
         return b.profit - a.profit
@@ -140,18 +135,17 @@ function analyzeSalesData(data, options) {
             return b.quantity - a.quantity
         })
         .splice(0, 10)
-        console.log(seller.top_products)
     });
     // @TODO: Подготовка итоговой коллекции с нужными полями
     return sellerStats.map(seller => {
         return{
         seller_id: seller.id,
         name: seller.name,
-        revenue: seller.revenue.toFixed(2),
-        profit: seller.profit.toFixed(2),
+        revenue: +seller.revenue.toFixed(2),
+        profit: +seller.profit.toFixed(2),
         sales_count: seller.sales_count,
         top_products: seller.top_products,
-        bonus: seller.bonus.toFixed(2)
+        bonus: +seller.bonus.toFixed(2)
         }
     })
 }
