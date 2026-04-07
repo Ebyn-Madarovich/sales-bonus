@@ -134,7 +134,7 @@ function analyzeSalesData(data, options) {
         .sort ((a, b) => {
             return b.quantity - a.quantity
         })
-        .splice(0, 10)
+        .slice(0, 10)
     });
     // @TODO: Подготовка итоговой коллекции с нужными полями
     return sellerStats.map(seller => {
